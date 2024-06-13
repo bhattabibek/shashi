@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\ProductService;
+use App\Models\Category;
 
 class HomePageController extends Controller
 {
@@ -14,7 +15,9 @@ class HomePageController extends Controller
       
     public function index(){
         $products = $this->productService->all();
-
-        return view('pages.home',compact('products'));
+  
+        $categories= Category::with('subcategory')->get();
+    
+        return view('pages.home',compact('products','categories'));
     }
 }

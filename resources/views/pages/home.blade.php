@@ -5,6 +5,7 @@
 
 
 
+
  <div class="container-fluid">
   <div class="row bg-secondary py-2 px-xl-5">
       <div class="col-lg-6 d-none d-lg-block">
@@ -70,6 +71,7 @@
 
 
 <!-- Navbar Start -->
+
 <div class="container-fluid mb-5">
   <div class="row border-top px-xl-5">
       <div class="col-lg-3 d-none d-lg-block">
@@ -87,15 +89,11 @@
                           <a href="" class="dropdown-item">Baby's Dresses</a>
                       </div>
                   </div>
-                  <a href="" class="nav-item nav-link">Shirts</a>
-                  <a href="" class="nav-item nav-link">Jeans</a>
-                  <a href="" class="nav-item nav-link">Swimwear</a>
-                  <a href="" class="nav-item nav-link">Sleepwear</a>
-                  <a href="" class="nav-item nav-link">Sportswear</a>
-                  <a href="" class="nav-item nav-link">Jumpsuits</a>
-                  <a href="" class="nav-item nav-link">Blazers</a>
-                  <a href="" class="nav-item nav-link">Jackets</a>
-                  <a href="" class="nav-item nav-link">Shoes</a>
+               
+                  @foreach($categories as $category)
+                  <a href="" class="nav-item nav-link">{{$category->name}}</a>
+                  @endforeach
+                 
               </div>
           </nav>
       </div>
