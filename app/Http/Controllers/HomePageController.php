@@ -13,8 +13,11 @@ class HomePageController extends Controller
       ) {
       }
       
-    public function index(){
-        $products = $this->productService->all();
+
+    public function index(Request $request){
+        $filterData = $request->search ?? $request->price ??'';
+
+        $products = $this->productService->all($filterData);
   
         $categories= Category::with('subcategory')->get();
     

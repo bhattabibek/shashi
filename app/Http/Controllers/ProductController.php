@@ -2,21 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Services\ProductService;
+use App\Models\Product;
 use Illuminate\Http\Request;
+use App\Services\ProductService;
+use App\Http\Controllers\Controller;
 
 class ProductController extends Controller
 {
     public function __construct(
-      protected ProductService $productService
+        protected ProductService $productService
     ) {
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        
-        $products = $this->productService->all();
+        $filterData = $request->search ?? $request->price ??'';
+     
+        $products = $this->productService->all($filterData);
         return view('products.index', compact('products'));
     }
 
@@ -40,8 +42,8 @@ class ProductController extends Controller
 
     public function show($id)
     {
-        $user = $this->productService->find($id);
-        return view('users.show', compact('user'));
+        $product = $this->productService->find($id);
+        return view('products.detail', compact('product'));
     }
 
     public function edit($id)
@@ -54,7 +56,7 @@ class ProductController extends Controller
     {
         $data = $request->validate([
             'name' => 'required',
-            'email' => 'required|unique:users,email,'.$id,
+            'email' => 'required|unique:users,email,' . $id,
             'password' => 'sometimes|confirmed'
         ]);
 
@@ -69,4 +71,11 @@ class ProductController extends Controller
 
         return redirect()->route('users.index');
     }
-}        
+    public function search(Request $request)
+    {
+        $search = 'product' ?? $request->input('search');
+        $products = Product::where('title', 'like', "%$search%")->get();
+
+        return view('products.detail', compact('products'));
+    }
+}

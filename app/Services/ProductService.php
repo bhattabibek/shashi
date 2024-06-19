@@ -26,9 +26,9 @@ class ProductService
         return $this->productRepository->delete($id);
     }
 
-    public function all()
+    public function all(string $filterData)
     {
-        return $this->productRepository->all();
+        return $this->productRepository->all($filterData);
     }
     
     public function find($id)

@@ -4,7 +4,7 @@ namespace App\Interfaces;
 
 interface ProductRepositoryInterface
 {
-    public function all();
+    public function all(string $data);
 
     public function create(array $data);
 

@@ -3,13 +3,22 @@
 namespace App\Repositories;
 
 use App\Models\Product;
+use Illuminate\Support\Facades\Request;
 use App\Interfaces\ProductRepositoryInterface;
 
 class ProductRepository implements ProductRepositoryInterface
 {
-    public function all()
+    public function all(string $filterData)
     {
-        return Product::all();
+        $products =  Product::query();
+        if ($filterData) {
+            $products = $products->where('title', 'like', "%$filterData")
+                                 ->orWhere('price', 'like', "%$filterData")
+                                  ->get();
+        } else {
+            $products = $products->get();
+        }
+        return $products;
     }
 
     public function create(array $data)
@@ -34,4 +43,4 @@ class ProductRepository implements ProductRepositoryInterface
     {
         return Product::findOrFail($id);
     }
-}        
+}

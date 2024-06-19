@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\Category;
 use App\Services\ProductService;
+use Illuminate\Support\Facades\View;
 use App\Repositories\ProductRepository;
 use Illuminate\Support\ServiceProvider;
 use App\Interfaces\ProductRepositoryInterface;
@@ -18,7 +20,6 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ProductService::class, function ($app) {
             return new ProductService($app->make(ProductRepositoryInterface::class));
         });
-
     }
 
     /**
@@ -26,6 +27,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        $categories = Category::with('subcategory')->get();
+        View::share('categories', $categories);
     }
 }
