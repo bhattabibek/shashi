@@ -13,6 +13,6 @@ class Cart extends Model
     protected $guarded = ['id'];
 
     public function product(){
-        $this->belongsTo(Product::class,'product_id','id');
+        return $this->belongsTo(Product::class,'product_id','id');
     }
 }

@@ -88,6 +88,8 @@
     $('.quantity button').on('click', function () {
         var button = $(this);
         var oldValue = button.parent().parent().find('input').val();
+        var cartID = button.parent().parent().find('input').attr('data-id');
+
         if (button.hasClass('btn-plus')) {
             var newVal = parseFloat(oldValue) + 1;
         } else {
@@ -97,8 +99,18 @@
                 newVal = 0;
             }
         }
+
         button.parent().parent().find('input').val(newVal);
+
+        updateCartQuantity(newVal,cartID);
     });
+
+    // $('#cart-quantity').on('mouseleave', function() {
+    //     const newVal = $(this).val();
+    //     var cartID = $(this).attr('data-id');
+
+    //     updateCartQuantity(newVal,cartID);
+    // });
     
 })(jQuery);
 

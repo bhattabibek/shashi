@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer('quantity')->default(1);
             $table->double('sub_total')->nullable();
             $table->double('total')->nullable();
+            $table->tinyInteger('is_active')->default(1);
             $table->timestamps();
             $table->foreign('product_id')->references('id')->on('products')->cascadeOnDelete();
             $table->foreign('user_id')->references('id')->on('users');

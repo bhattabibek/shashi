@@ -3,10 +3,6 @@
 @section('content')
  <!-- Topbar Start -->
 
-
-
-
-
 <!-- Topbar End -->
 
 
@@ -48,16 +44,9 @@
               <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                   <div class="navbar-nav mr-auto py-0">
                       <a href={{url('/')}} class="nav-item nav-link active"> Home</a>
-                      <a href={{url('shop')}} class="nav-item nav-link">Shop</a>
-                      <a href={{url('detail')}}} class="nav-item nav-link">Shop Detail</a>
-                      <div class="nav-item dropdown">
-                          <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages</a>
-                          <div class="dropdown-menu rounded-0 m-0">
-                              <a href={{url('cart')}} class="dropdown-item">Shopping Cart</a>
-                              <a href={{url('checkout')}} class="dropdown-item">Checkout</a>
-                          </div>
-                      </div>
+                      <a href={{url('products')}} class="nav-item nav-link">Products</a>
                       <a href={{url('contact')}} class="nav-item nav-link">Contact</a>
+                      <a href={{url('faq')}} class="nav-item nav-link">FAQ</a>
                   </div>
                   <div class="navbar-nav ml-auto py-0">
                       <a href="" class="nav-item nav-link">Login</a>

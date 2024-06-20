@@ -11,26 +11,44 @@ class CartController extends Controller
 {
     public function addToCart(Request $request)
     {
-        $productId = 10 ?? $request->product_id;
-        $quantity = $request->quantity ?? 1;
-
+        $productSlug = $request->productSlug;
         $userId = 1 ?? auth()->id;
 
-        // $product = Product::find($productId);
+        $product = Product::whereSlug($productSlug)->first();
 
-        // if (!$product) {
-        //     throw new Exception('Product not exists.');
-        // }
+        if (!$product) {
+            throw new Exception('Product not exists.');
+        }
+
+        $existsCart = Cart::where('is_active', 1)->where('product_id', $product->id)->where('user_id', $userId)->first();
+        if(!$existsCart){
+            session()->forget('cart');
+        }
+        
+        $quantity = $existsCart->quantity ?? 1;
+
+        $cart = $request->session()->get('cart', []);
+        if (isset($cart[$productSlug])) {
+            $cart[$productSlug]['quantity']++;
+        } else {
+            $cart[$productSlug] = [
+                'product_id' => $productSlug,
+                'quantity' => $quantity,
+            ];
+        }
+    
+        $request->session()->put('cart', $cart);
+        
+        $total = $product['price'] * $cart[$productSlug]['quantity'];
 
         Cart::updateOrCreate(
             [
-                'product_id' => $productId,
-                'user_id' => $userId
+                'product_id' => $product['id'],
+                'user_id'    => $userId
             ],
             [
-                'quantity' => $quantity,
-                'subtotal' => null,
-                'total' => null
+                'quantity' => $cart[$productSlug]['quantity'],
+                'total'  => $total
             ]
         );
 
@@ -40,25 +58,44 @@ class CartController extends Controller
     public function showCart()
     {
         $carts = Cart::with('product')->get();
-dd($carts);
-        return view('cart.show', compact('carts'));
+        $subtotal = Cart::sum('total');
+        $shippingCharge = 10;
+        $totalWithShipping = $subtotal + $shippingCharge;
+
+        return view('cart.show', compact('carts','subtotal','totalWithShipping','shippingCharge'));
     }
 
     public function updateItem(Request $request, $id)
     {
-        $quantity = $request->input('quantity');
+        $quantity = $request->quantity;
 
         $cart = session()->get('cart');
 
-        if (isset($cart[$id])) {
-            $cart[$id]['quantity'] = $quantity;
+        $cart = Cart::find($id);
 
-            session()->put('cart', $cart);
-
-            return redirect()->route('cart.show')->with('success', 'Cart updated successfully');
+        if(!$cart){
+            return redirect()->route('cart.show')->with('error', 'Product not found in cart');
         }
 
-        return redirect()->route('cart.show')->with('error', 'Product not found in cart');
+        $total = $cart->product->price * $quantity;
+        
+        $cart->update([
+            'quantity' => $quantity,
+            'total'    => $total
+        ]);
+
+        $subtotal = Cart::sum('total');
+        $shippingCharge = 10;
+        $totalWithShipping = $subtotal + $shippingCharge;
+        
+        return response()->json([
+            'data' => $cart,
+            'calculation' => [
+                'subtotal' => $subtotal,
+                'totalWithShipping' => $totalWithShipping
+            ],
+            'success' => 'Cart updated successfully'
+        ]);
     }
 
     public function removeItem($id)
@@ -67,9 +104,10 @@ dd($carts);
 
         if (isset($cart[$id])) {
             unset($cart[$id]);
-
             session()->put('cart', $cart);
         }
+
+        Cart::find($id)->update(['is_active' => 0]);
 
         return redirect()->route('cart.show')->with('success', 'Product removed from cart successfully');
     }

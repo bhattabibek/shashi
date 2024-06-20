@@ -11,5 +11,5 @@ class Product extends Model
 {
     use CrudTrait;
     use HasFactory,SoftDeletes;
-    protected $guarded = ['id']; 
+    protected $guarded = ['id'];
 }
