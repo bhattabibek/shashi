@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\View;
 use App\Repositories\ProductRepository;
 use Illuminate\Support\ServiceProvider;
 use App\Interfaces\ProductRepositoryInterface;
+use App\Models\Cart;
 use Illuminate\Support\Facades\Schema;
 
 class AppServiceProvider extends ServiceProvider
@@ -31,6 +32,11 @@ class AppServiceProvider extends ServiceProvider
         if (Schema::hasTable('categories')) {
             $categories = Category::with('subcategory')->get();
             View::share('categories', $categories);
+        }
+
+        if (Schema::hasTable('carts')) {
+            $cartCounts = Cart::count();
+            View::share('cartCounts', $cartCounts);
         }
     }
 }

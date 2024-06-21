@@ -70,9 +70,7 @@ class CartController extends Controller
         $shippingCharge = $subtotal != 0 ? 10 : 0;
         $totalWithShipping = $subtotal != 0 ? $subtotal + $shippingCharge : 0;
 
-        $cartCounts = Cart::count();
-
-        return view('cart.show', compact('carts','subtotal','totalWithShipping','shippingCharge','cartCounts'));
+        return view('cart.show', compact('carts','subtotal','totalWithShipping','shippingCharge'));
     }
 
     public function updateItem(Request $request, $id)
