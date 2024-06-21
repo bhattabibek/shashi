@@ -18,6 +18,18 @@
             body: JSON.stringify({
                 productSlug: productSlug
             })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(response => {
+            document.querySelector('.cart-item-counts').textContent = response.calculation.counts;
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
         });
     }
 
@@ -32,16 +44,25 @@
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': token
             }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(response => {
+            console.log(document.querySelector('.cart-shipping'));
+            console.log(response.calculation.shippingCharge);
+            document.querySelector('#cart-subtotal').textContent = response.calculation.subtotal;
+            document.querySelector('#cart-total').textContent = response.calculation.totalWithShipping;
+            document.querySelector('.cart-item-counts').textContent = response.calculation.counts;
+            document.querySelector('#cart-shipping').textContent = response.calculation.shippingCharge;
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+            // handle error (e.g., notify the user)
         });
-    }
-
-    function setCartItemCounts(){
-        const headerCartItemCounts = document.querySelectorAll('#cart-item-counts');
-        if(headerCartItemCounts){
-            headerCartItemCounts.forEach(item => {
-                item.textContent = {{ App\Models\Cart::count() }};
-            });
-        }
     }
 
     function updateCartQuantity(cartQuantity, cardID) {
@@ -72,6 +93,7 @@
                 document.querySelector(elementTotal).textContent = response.data.total;
                 document.querySelector('#cart-subtotal').textContent = response.calculation.subtotal;
                 document.querySelector('#cart-total').textContent = response.calculation.totalWithShipping;
+                document.querySelector('.cart-item-counts').textContent = response.calculation.counts;
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -80,21 +102,29 @@
         }
     }
 
-    document.addEventListener('click', function(event) {
-        if(event.target.classList.contains('add-to-cart')){
-            handleAddToCart(event);
-        }
-    });
+    document.addEventListener('DOMContentLoaded', (event) => {
+        document.addEventListener('click', function(event) {
+            if(event.target.classList.contains('add-to-cart')){
+                handleAddToCart(event);
+            }
+    
+            const deleteCartButton = event.target.classList.contains('delete-cart') ? event.target : event.target.closest('button.delete-cart');
+            if (deleteCartButton) {
+                const cardID = deleteCartButton.getAttribute('data-id');
+                handleRemoveCart(cardID);
+                deleteCartButton.closest('tr').remove();
 
-    document.addEventListener('focusout', function(event) {
-        var quantityInputBox = event.target;
-        
-        // if exists cart quantity input
-        if(quantityInputBox.classList.contains('cart-quantity')){
-            const newVal = quantityInputBox.value;
-            var cartID = quantityInputBox.getAttribute('data-id');
-            updateCartQuantity(newVal,cartID);
-        }
+            }
+            document.addEventListener('focusout', function(event) {
+                var quantityInputBox = event.target;
+                
+                // if exists cart quantity input
+                if(quantityInputBox.classList.contains('cart-quantity')){
+                    const newVal = quantityInputBox.value;
+                    var cartID = quantityInputBox.getAttribute('data-id');
+                    updateCartQuantity(newVal,cartID);
+                }
+            });
+        });
     });
-    setCartItemCounts();
 </script>

@@ -17,10 +17,12 @@ class CartController extends Controller
         $product = Product::whereSlug($productSlug)->first();
 
         if (!$product) {
-            throw new Exception('Product not exists.');
+            return response()->json([
+                'message' => 'Product not exists.'
+            ]);        
         }
 
-        $existsCart = Cart::where('is_active', 1)->where('product_id', $product->id)->where('user_id', $userId)->first();
+        $existsCart = Cart::where('product_id', $product->id)->where('user_id', $userId)->first();
         if(!$existsCart){
             session()->forget('cart');
         }
@@ -52,17 +54,25 @@ class CartController extends Controller
             ]
         );
 
-        return redirect()->route('cart.show')->with('success', 'Product added to cart successfully!');
+        return response()->json([
+            'data' => null,
+           'calculation' => [
+                'counts' => Cart::count()
+            ],
+            'message' => 'Product added to cart successfully!'
+        ]);
     }
 
     public function showCart()
     {
         $carts = Cart::with('product')->get();
         $subtotal = Cart::sum('total');
-        $shippingCharge = 10;
-        $totalWithShipping = $subtotal + $shippingCharge;
+        $shippingCharge = $subtotal != 0 ? 10 : 0;
+        $totalWithShipping = $subtotal != 0 ? $subtotal + $shippingCharge : 0;
 
-        return view('cart.show', compact('carts','subtotal','totalWithShipping','shippingCharge'));
+        $cartCounts = Cart::count();
+
+        return view('cart.show', compact('carts','subtotal','totalWithShipping','shippingCharge','cartCounts'));
     }
 
     public function updateItem(Request $request, $id)
@@ -71,10 +81,13 @@ class CartController extends Controller
 
         $cart = session()->get('cart');
 
-        $cart = Cart::find($id);
+        $cart = Cart::where('id',$id)->first();
 
         if(!$cart){
-            return redirect()->route('cart.show')->with('error', 'Product not found in cart');
+            return response()->json([
+                'data' => null,
+                'message' => 'Product not found in cart'
+            ]);
         }
 
         $total = $cart->product->price * $quantity;
@@ -85,16 +98,18 @@ class CartController extends Controller
         ]);
 
         $subtotal = Cart::sum('total');
-        $shippingCharge = 10;
-        $totalWithShipping = $subtotal + $shippingCharge;
+        $shippingCharge = $subtotal != 0 ? 10 : 0;
+        $totalWithShipping = $subtotal != 0 ? $subtotal + $shippingCharge : 0;
         
         return response()->json([
             'data' => $cart,
             'calculation' => [
                 'subtotal' => $subtotal,
-                'totalWithShipping' => $totalWithShipping
+                'shippingCharge' => $shippingCharge,
+                'totalWithShipping' => $totalWithShipping,
+                'counts' => Cart::count()
             ],
-            'success' => 'Cart updated successfully'
+            'message' => 'Cart updated successfully'
         ]);
     }
 
@@ -107,8 +122,21 @@ class CartController extends Controller
             session()->put('cart', $cart);
         }
 
-        Cart::find($id)->update(['is_active' => 0]);
+        Cart::find($id)->delete();
 
-        return redirect()->route('cart.show')->with('success', 'Product removed from cart successfully');
+        $subtotal = Cart::sum('total');
+        $shippingCharge = $subtotal != 0? 10 : 0;
+        $totalWithShipping = $subtotal != 0? $subtotal + $shippingCharge : 0;
+
+        return response()->json([
+            'data' => null,
+            'calculation' => [
+                'subtotal' => $subtotal,
+                'totalWithShipping' => $totalWithShipping,
+                'shippingCharge' => $shippingCharge,
+                'counts' => Cart::count()
+            ],
+            'message' => 'Item removed successfully'
+        ]);
     }
 }

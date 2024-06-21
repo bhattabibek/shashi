@@ -87,7 +87,7 @@
             </a>
             <a href="{{ route('cart.show') }}" class="btn border">
                 <i class="fas fa-shopping-cart text-primary"></i>
-                <span class="badge" id="cart-item-counts">0</span>
+                <span class="badge cart-item-counts">{{ $cartCounts ?? 0 }}</span>
             </a>
         </div>
     </div>

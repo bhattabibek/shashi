@@ -93,10 +93,10 @@
         if (button.hasClass('btn-plus')) {
             var newVal = parseFloat(oldValue) + 1;
         } else {
-            if (oldValue > 0) {
+            if (oldValue > 1) {
                 var newVal = parseFloat(oldValue) - 1;
             } else {
-                newVal = 0;
+                newVal = 1;
             }
         }
 
@@ -104,13 +104,6 @@
 
         updateCartQuantity(newVal,cartID);
     });
-
-    // $('#cart-quantity').on('mouseleave', function() {
-    //     const newVal = $(this).val();
-    //     var cartID = $(this).attr('data-id');
-
-    //     updateCartQuantity(newVal,cartID);
-    // });
     
 })(jQuery);
 
