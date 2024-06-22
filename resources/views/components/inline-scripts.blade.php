@@ -3,6 +3,39 @@
         return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     }
 
+    function handleNewsletterForm(event) {
+        event.preventDefault();
+
+        var token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        const name = document.querySelector('.newsletter-form input[name="name"]').value;
+        const email = document.querySelector('.newsletter-form input[name="email"]').value;
+
+        fetch('{{ route('newsletter.post') }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': token
+            },
+            body: JSON.stringify({
+                name: name,
+                email: email
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(response => {
+            console.log(response.message);
+            event.target.closest('.newsletter-form').reset();
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+        });
+    }
+
     function handleAddToCart(event) {
         event.preventDefault();
 
@@ -102,10 +135,20 @@
         }
     }
 
+    // Newsletter Form Submission
+    // document.getElementById('newsletter-submit').addEventListener('click', function(event) {
+    //     event.preventDefault();
+    //     console.log('111');
+    // });
+
     document.addEventListener('DOMContentLoaded', (event) => {
         document.addEventListener('click', function(event) {
             if(event.target.classList.contains('add-to-cart')){
                 handleAddToCart(event);
+            }
+
+            if(event.target.classList.contains('newsletter-submit')){
+                handleNewsletterForm(event);
             }
     
             const deleteCartButton = event.target.classList.contains('delete-cart') ? event.target : event.target.closest('button.delete-cart');

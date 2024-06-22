@@ -10,15 +10,15 @@ class NewsLetterController extends Controller
 {
     public function store(Request $request)
     {
-    
-        $newsletter = NewsLetter::create([
+        NewsLetter::create([
             'name' => $request->name,
             'email'=>$request->email,
         ]);
 
-        // return response()->json([
-        //     'message' => 'thank you for submitting'
-        // ]);
-        return redirect()->back()->with('success',"thank you for submitting");
+        // to send email to admin
+        
+        return response()->json([
+            'message' => 'thank you for submitting'
+        ]);
     }
 }

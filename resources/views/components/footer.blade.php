@@ -37,7 +37,8 @@
                   </div>
                   <div class="col-md-4 mb-5">
                       <h5 class="font-weight-bold text-dark mb-4">Newsletter</h5>
-                      <form action="{{ route('newsletter.post') }}" method="post">
+                      <form action="#" class="newsletter-form">
+                        @csrf
                           <div class="form-group">
                               <input type="text" name="name" class="form-control border-0 py-4" placeholder="Your Name" required="required" />
                           </div>
@@ -46,7 +47,7 @@
                                   required="required" />
                           </div>
                           <div>
-                              <button class="btn btn-primary btn-block border-0 py-3" type="submit">Subscribe Now</button>
+                              <button class="btn btn-primary btn-block border-0 py-3 newsletter-submit" type="submit">Subscribe Now</button>
                           </div>
                       </form>
                   </div>
