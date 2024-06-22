@@ -6,7 +6,7 @@ use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\HomePageController;
-
+use App\Http\Controllers\NewsLetterController;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,3 +50,6 @@ Route::post('/cart',[CartController::class,'addToCart'])->name('cart.add');
 Route::get('/cart',[CartController::class,'showCart'])->name('cart.show');
 Route::post('/cart/{id}',[CartController::class,'updateItem'])->name('cart.update');
 Route::delete('/cart/{id}',[CartController::class,'removeItem'])->name('cart.remove');
+
+
+Route::post('/newsletter',[NewsLetterController::class,'store'])->name('newsletter.post');
